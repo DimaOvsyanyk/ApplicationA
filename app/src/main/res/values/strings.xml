@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">AppA</string>
+    <string name="type_image_url">Type image url</string>
+    <string name="ok">OK</string>
+    <string name="open_time">Open Time</string>
+    <string name="status">Status</string>
+    <string name="sort_by_date">Sort by date</string>
+    <string name="sort_by_status">Sort by status</string>
+</resources>
