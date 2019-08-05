@@ -4,50 +4,47 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.dimaoprog.appa.data.RoomRepository;
 import com.dimaoprog.appa.entities.ImageLink;
+import com.dimaoprog.appa.utils.Sort;
 
 import java.util.List;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+
 public class HistoryViewModel extends AndroidViewModel {
 
+    private CompositeDisposable disposable = new CompositeDisposable();
     private RoomRepository repository;
-    private LiveData<List<ImageLink>> imageLinkList;
-    private LiveData<List<ImageLink>> imageLinkListNewFirst;
-    private LiveData<List<ImageLink>> imageLinkListOldFirst;
-    private LiveData<List<ImageLink>> imageLinkListStatusAsc;
-    private LiveData<List<ImageLink>> imageLinkListStatusDesc;
-
+    private MutableLiveData<List<ImageLink>> imageLinkList = new MutableLiveData<>();
 
     public HistoryViewModel(@NonNull Application application) {
         super(application);
         repository = new RoomRepository(application);
-        imageLinkList = repository.getImageLinkList();
-        imageLinkListNewFirst = repository.getImageLinkListNewFirst();
-        imageLinkListOldFirst = repository.getImageLinkListOldFirst();
-        imageLinkListStatusAsc = repository.getImageLinkListStatusAsc();
-        imageLinkListStatusDesc = repository.getImageLinkListStatusDesc();
+        getImageLinkListFromDB(Sort.NOT_SORT);
     }
 
-    public LiveData<List<ImageLink>> getImageLinkList() {
+    public void getImageLinkListFromDB(Sort sort) {
+        disposable.clear();
+        disposable.add(repository.getImageLinkList(sort)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::setImageLinkList));
+    }
+
+    public MutableLiveData<List<ImageLink>> getImageLinkList() {
         return imageLinkList;
     }
 
-    public LiveData<List<ImageLink>> getImageLinkListNewFirst() {
-        return imageLinkListNewFirst;
+    private void setImageLinkList(List<ImageLink> imageLinkList) {
+        this.imageLinkList.setValue(imageLinkList);
     }
 
-    public LiveData<List<ImageLink>> getImageLinkListOldFirst() {
-        return imageLinkListOldFirst;
-    }
-
-    public LiveData<List<ImageLink>> getImageLinkListStatusAsc() {
-        return imageLinkListStatusAsc;
-    }
-
-    public LiveData<List<ImageLink>> getImageLinkListStatusDesc() {
-        return imageLinkListStatusDesc;
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        disposable.dispose();
     }
 }

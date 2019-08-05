@@ -2,49 +2,36 @@ package com.dimaoprog.appa.data;
 
 import android.app.Application;
 
-import androidx.lifecycle.LiveData;
-
 import com.dimaoprog.appa.entities.ImageLink;
+import com.dimaoprog.appa.utils.Sort;
 
 import java.util.List;
+
+import io.reactivex.Flowable;
 
 public class RoomRepository {
 
     private ImageUrlDao imageUrlDao;
-    private LiveData<List<ImageLink>> imageLinkList;
-    private LiveData<List<ImageLink>> imageLinkListNewFirst;
-    private LiveData<List<ImageLink>> imageLinkListOldFirst;
-    private LiveData<List<ImageLink>> imageLinkListStatusAsc;
-    private LiveData<List<ImageLink>> imageLinkListStatusDesc;
 
     public RoomRepository(Application application) {
         AppDatabase db = AppDatabase.getInstance(application);
         imageUrlDao = db.imageUrlDao();
-        imageLinkList = imageUrlDao.getAllImageLinkList();
-        imageLinkListNewFirst = imageUrlDao.getAllImageLinkListOrderNewFirst();
-        imageLinkListOldFirst = imageUrlDao.getAllImageLinkListOrderOldFirst();
-        imageLinkListStatusAsc = imageUrlDao.getAllImageLinkListOrderByStatusAsc();
-        imageLinkListStatusDesc = imageUrlDao.getAllImageLinkListOrderByStatusDesc();
-
     }
 
-    public LiveData<List<ImageLink>> getImageLinkList() {
-        return imageLinkList;
-    }
-
-    public LiveData<List<ImageLink>> getImageLinkListNewFirst() {
-        return imageLinkListNewFirst;
-    }
-
-    public LiveData<List<ImageLink>> getImageLinkListOldFirst() {
-        return imageLinkListOldFirst;
-    }
-
-    public LiveData<List<ImageLink>> getImageLinkListStatusAsc() {
-        return imageLinkListStatusAsc;
-    }
-
-    public LiveData<List<ImageLink>> getImageLinkListStatusDesc() {
-        return imageLinkListStatusDesc;
+    public Flowable<List<ImageLink>> getImageLinkList(Sort sort) {
+        switch (sort) {
+            case NOT_SORT:
+                return imageUrlDao.getAllImageLinkList();
+            case NEW_FIRST:
+                return imageUrlDao.getAllImageLinkListOrderNewFirst();
+            case OLD_FIRST:
+                return imageUrlDao.getAllImageLinkListOrderOldFirst();
+            case STATUS_ASC:
+                return imageUrlDao.getAllImageLinkListOrderByStatusAsc();
+            case STATUS_DESC:
+                return imageUrlDao.getAllImageLinkListOrderByStatusDesc();
+            default:
+                return imageUrlDao.getAllImageLinkList();
+        }
     }
 }

@@ -1,7 +1,6 @@
 package com.dimaoprog.appa.view.history;
 
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Bundle;
@@ -16,12 +15,10 @@ import android.view.ViewGroup;
 
 import com.dimaoprog.appa.R;
 import com.dimaoprog.appa.databinding.HistoryFragmentBinding;
-import com.dimaoprog.appa.entities.ImageLink;
 import com.dimaoprog.appa.utils.IOptionMenuListener;
 import com.dimaoprog.appa.utils.ISendBroadcastListener;
 import com.dimaoprog.appa.utils.ISetHistoryFragmentListener;
-
-import java.util.List;
+import com.dimaoprog.appa.utils.Sort;
 
 public class HistoryFragment extends Fragment implements IOptionMenuListener {
 
@@ -55,47 +52,26 @@ public class HistoryFragment extends Fragment implements IOptionMenuListener {
         HistoryFragmentBinding binding = DataBindingUtil.inflate(inflater, R.layout.history_fragment, container, false);
         adapter = new LinksAdapter(sendBroadcastListener);
         binding.rvUrlList.setAdapter(adapter);
-        hViewModel.getImageLinkList().observe(getViewLifecycleOwner(), listObserver);
+
+        hViewModel.getImageLinkList().observe(getViewLifecycleOwner(), imageLinks -> adapter.submitList(imageLinks));
         return binding.getRoot();
     }
 
-    private Observer<List<ImageLink>> listObserver = imageLinks -> adapter.submitList(imageLinks);
-
     @Override
     public void sortByDate(boolean newFirst) {
-        removeObservers();
         if (newFirst) {
-            hViewModel.getImageLinkListNewFirst().observe(getViewLifecycleOwner(), listObserver);
+            hViewModel.getImageLinkListFromDB(Sort.NEW_FIRST);
         } else {
-            hViewModel.getImageLinkListOldFirst().observe(getViewLifecycleOwner(), listObserver);
+            hViewModel.getImageLinkListFromDB(Sort.OLD_FIRST);
         }
     }
 
     @Override
     public void sortByStatus(boolean ascending) {
-        removeObservers();
         if (ascending) {
-            hViewModel.getImageLinkListStatusAsc().observe(getViewLifecycleOwner(), listObserver);
+            hViewModel.getImageLinkListFromDB(Sort.STATUS_ASC);
         } else {
-            hViewModel.getImageLinkListStatusDesc().observe(getViewLifecycleOwner(), listObserver);
-        }
-    }
-
-    private void removeObservers() {
-        if (hViewModel.getImageLinkList().hasObservers()) {
-            hViewModel.getImageLinkList().removeObservers(getViewLifecycleOwner());
-        }
-        if (hViewModel.getImageLinkListNewFirst().hasObservers()) {
-            hViewModel.getImageLinkListNewFirst().removeObservers(getViewLifecycleOwner());
-        }
-        if (hViewModel.getImageLinkListOldFirst().hasObservers()) {
-            hViewModel.getImageLinkListOldFirst().removeObservers(getViewLifecycleOwner());
-        }
-        if (hViewModel.getImageLinkListStatusAsc().hasObservers()) {
-            hViewModel.getImageLinkListStatusAsc().removeObservers(getViewLifecycleOwner());
-        }
-        if (hViewModel.getImageLinkListStatusDesc().hasObservers()) {
-            hViewModel.getImageLinkListStatusDesc().removeObservers(getViewLifecycleOwner());
+            hViewModel.getImageLinkListFromDB(Sort.STATUS_DESC);
         }
     }
 }

@@ -12,6 +12,8 @@ import com.dimaoprog.appa.entities.ImageLink;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
+
 import static com.dimaoprog.appa.utils.Constants.COLUMN_ID;
 import static com.dimaoprog.appa.utils.Constants.DATABASE_TABLE_NAME;
 
@@ -19,19 +21,19 @@ import static com.dimaoprog.appa.utils.Constants.DATABASE_TABLE_NAME;
 public interface ImageUrlDao {
 
     @Query("SELECT * FROM " + DATABASE_TABLE_NAME)
-    LiveData<List<ImageLink>> getAllImageLinkList();
+    Flowable<List<ImageLink>> getAllImageLinkList();
 
     @Query("SELECT * FROM " + DATABASE_TABLE_NAME + " ORDER BY id DESC")
-    LiveData<List<ImageLink>> getAllImageLinkListOrderNewFirst();
+    Flowable<List<ImageLink>> getAllImageLinkListOrderNewFirst();
 
     @Query("SELECT * FROM " + DATABASE_TABLE_NAME + " ORDER BY id ASC")
-    LiveData<List<ImageLink>> getAllImageLinkListOrderOldFirst();
+    Flowable<List<ImageLink>> getAllImageLinkListOrderOldFirst();
 
     @Query("SELECT * FROM " + DATABASE_TABLE_NAME + " ORDER BY status DESC")
-    LiveData<List<ImageLink>> getAllImageLinkListOrderByStatusDesc();
+    Flowable<List<ImageLink>> getAllImageLinkListOrderByStatusDesc();
 
     @Query("SELECT * FROM " + DATABASE_TABLE_NAME + " ORDER BY status ASC")
-    LiveData<List<ImageLink>> getAllImageLinkListOrderByStatusAsc();
+    Flowable<List<ImageLink>> getAllImageLinkListOrderByStatusAsc();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insert(ImageLink imageLink);
