@@ -58,22 +58,24 @@ public class MainActivity extends AppCompatActivity implements ISendBroadcastLis
 
     @Override
     public void sendBroadcast(String url) {
-        Intent intent = new Intent(URL_PICKED);
-        intent.putExtra(COLUMN_URL, url);
-        intent.putExtra(OPEN_START, System.currentTimeMillis());
-        intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-        sendBroadcast(intent);
+        Intent intent = new Intent(URL_PICKED)
+                .putExtra(COLUMN_URL, url)
+                .putExtra(OPEN_START, System.currentTimeMillis())
+                .addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     @Override
     public void sendBroadcast(ImageLink imageLink) {
-        Intent intent = new Intent(URL_PICKED);
-        intent.putExtra(COLUMN_ID, imageLink.getId());
-        intent.putExtra(COLUMN_URL, imageLink.getUrl());
-        intent.putExtra(COLUMN_STATUS, imageLink.getStatus());
-        intent.putExtra(COLUMN_OPEN_TIME, imageLink.getOpenTime());
-        intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-        sendBroadcast(intent);
+        Intent intent = new Intent(URL_PICKED)
+                .putExtra(COLUMN_ID, imageLink.getId())
+                .putExtra(COLUMN_URL, imageLink.getUrl())
+                .putExtra(COLUMN_STATUS, imageLink.getStatus())
+                .putExtra(COLUMN_OPEN_TIME, imageLink.getOpenTime())
+                .addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     @Override
